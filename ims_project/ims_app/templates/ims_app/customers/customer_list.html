@@ -1,0 +1,16 @@
+{% extends "ims_app/base.html" %}
+
+{% block title %}Customers - IMS{% endblock %}
+
+{% block content %}
+<h1>Customers</h1>
+<ul class="list-group">
+    {% for customer in customers %}
+    <li class="list-group-item">
+        <a href="{% url 'customer_detail' customer.id %}">{{ customer.name }}</a> - {{ customer.phone_number }}
+    </li>
+    {% empty %}
+    <li class="list-group-item">No customers found.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
