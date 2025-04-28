@@ -33,13 +33,14 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    "ims_app.apps.ImsAppConfig",
     "ims_project.apps.MongoAdminConfig",
     "ims_project.apps.MongoAuthConfig",
     "ims_project.apps.MongoContentTypesConfig",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "ims_app",
+    
 ]
 
 MIDDLEWARE = [
