@@ -1,6 +1,5 @@
 .venv
-!media/
-media/*
+media/
 db.sqlite3
 .venv
 ims_project/.env
