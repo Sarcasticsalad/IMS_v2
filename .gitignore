@@ -2,3 +2,4 @@
 !media/
 media/*
 db.sqlite3
+.venv
