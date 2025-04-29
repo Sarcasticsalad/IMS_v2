@@ -3,7 +3,7 @@
 
 {% block content %}
 <h2>Customers</h2>
-<a href="{% url 'customer_create' %}" class="btn btn-primary mb-3">Add Customer</a>
+<a href="{% url 'ims:model_create' model_name='customer' %}" class="btn btn-primary mb-3">Add Customer</a>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -20,8 +20,8 @@
             <td>{{ item.email }}</td>
             <td>{{ item.phone }}</td>
             <td>
-                <a href="{% url 'customer_update' item._id %}" class="btn btn-sm btn-warning">Edit</a>
-                <a href="{% url 'customer_delete' item._id %}" class="btn btn-sm btn-danger">Delete</a>
+                <a href="{% url 'ims:model_update' model_name='customer' item_id=item.item_id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'ims:model_delete' model_name='customer' item_id=item.item_id %}" class="btn btn-sm btn-danger">Delete</a>
             </td>
         </tr>
         {% endfor %}

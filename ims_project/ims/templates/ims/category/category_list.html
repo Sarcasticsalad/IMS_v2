@@ -3,7 +3,7 @@
 
 {% block content %}
 <h2>Categories</h2>
-<a href="{% url 'category_create' %}" class="btn btn-primary mb-3">Add Category</a>
+<a href="{% url 'ims:model_create' model_name='category'%}" class="btn btn-primary mb-3">Add Category</a>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -18,8 +18,8 @@
             <td>{{ item.name }}</td>
             <td>{{ item.description }}</td>
             <td>
-                <a href="{% url 'category_update' item._id %}" class="btn btn-sm btn-warning">Edit</a>
-                <a href="{% url 'category_delete' item._id %}" class="btn btn-sm btn-danger">Delete</a>
+                <a href="{% url 'ims:model_update' model_name='category' item_id=item.item_id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'ims:model_delete' model_name='category' item_id=item.item_id %}" class="btn btn-sm btn-danger">Delete</a>
             </td>
         </tr>
         {% endfor %}
