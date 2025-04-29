@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Product, Category, Customer, Supplier
 from django.http import Http404
 from django.urls import reverse
-
+from ims.models import Category, Supplier
 
 # CRUD Helper function to map model names to MongoDB model classes
 def get_model_instance(model_name):
@@ -17,8 +17,7 @@ def get_model_instance(model_name):
     if model_class:
         return model_class
     else:
-        raise Http404(f"Model '{model_name}' does not exist.")  # Handle invalid model name
-
+        raise Http404(f"Model '{model_name}' does not exist.")  
 @login_required
 def dashboard(request):
     # Render the dashboard page for authenticated users
@@ -52,6 +51,17 @@ def model_create(request, model_name):
                 model_instance.create(data)
 
             return redirect(reverse('ims:model_list', kwargs={'model_name': model_name}))
+        
+        # Add supplier and category context for products
+        if model_name == 'product':
+            categories = Category().all()
+            suppliers = Supplier().all()
+            context = {
+                'item': None,
+                'categories': categories,
+                'suppliers': suppliers
+            }
+            return render(request, f'ims/{model_name}/{model_name}_form.html', context)
 
         return render(request, f'ims/{model_name}/{model_name}_form.html', {'item': None})
 
@@ -62,8 +72,8 @@ def model_create(request, model_name):
 def model_update(request, model_name, item_id):
     try:
         model_class = get_model_instance(model_name)
-        model_instance = model_class()  # Instantiate the model
-        item = model_instance.read(item_id)  # Use instance method
+        model_instance = model_class()  
+        item = model_instance.read(item_id)  
 
         if not item:
             raise Http404(f"{model_name.capitalize()} with ID {item_id} does not exist.")
@@ -72,11 +82,28 @@ def model_update(request, model_name, item_id):
             data = request.POST.dict()
             data.pop('csrfmiddlewaretoken', None)
 
-            model_instance.update(item_id, data)  # Use instance method
+            image_file = request.FILES.get('image')
+
+            if model_name == 'product' and image_file:
+                if 'image_url' in item:
+                    model_instance.delete_image(item['image_url'])
+                model_instance.update(item_id, data)  
+
+            else:
+                model_instance.update(item_id, data)
 
             return redirect(reverse('ims:model_list', args=[model_name]))
+        
+        # Prepare context for rendering the form
+        context = {'item': item}
 
-        return render(request, f'ims/{model_name}/{model_name}_form.html', {'item': item})
+        if model_name == 'product':
+            categories = Category().all()
+            suppliers = Supplier().all()
+            context['categories'] = categories
+            context['suppliers'] = suppliers
+
+        return render(request, f'ims/{model_name}/{model_name}_form.html', context)
 
     except Http404:
         return render(request, 'ims/404.html')
@@ -92,7 +119,7 @@ def model_delete(request, model_name, item_id):
         if not item:
             raise Http404(f"{model_name.capitalize()} with ID {item_id} does not exist.")
 
-        model_instance.delete(item_id)  # Use instance method
+        model_instance.delete(item_id)  
         return redirect(reverse('ims:model_list', args=[model_name]))
 
     except Http404:

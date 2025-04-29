@@ -10,7 +10,9 @@
             <th>Name</th>
             <th>Price</th>
             <th>Stock</th>
-            <th>Image</th>  <!-- Added column for the image -->
+            <th>Category</th>  
+            <th>Supplier</th>  
+            <th>Image</th>  
             <th>Actions</th>
         </tr>
     </thead>
@@ -20,6 +22,8 @@
             <td>{{ item.name }}</td>
             <td>{{ item.price }}</td>
             <td>{{ item.stock }}</td>
+            <td>{{ item.category_name }}</td>  
+            <td>{{ item.supplier_name }}</td>  
             <td>
                 {% if item.image_url %}
                     <img src="{{ item.image_url }}" alt="Product Image" style="max-width: 100px; height: auto;">

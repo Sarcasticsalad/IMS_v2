@@ -71,6 +71,23 @@ class Product(MongoBase):
     def __init__(self, client=None):
         super().__init__('products', client)
 
+    def all(self):
+        try:
+            products = list(self.collection.find())
+            # Get category and supplier mappings
+            categories = {str(cat['_id']): cat['name'] for cat in Category().collection.find()}   
+            suppliers = {str(sup['_id']): sup['name'] for sup in Supplier().collection.find()}
+
+            for product in products:
+                product['item_id'] = str(product['_id'])
+                product['category_name'] = categories.get(product.get('category_id'), 'Unknown')
+                product['supplier_name'] = suppliers.get(product.get('supplier_id'), 'Unknown')
+
+            return products
+        except Exception as e:
+            print(f"Error fetching enriched product data: {e}")
+            return []    
+
     def create(self, data, image_file=None):
         if image_file:
             image_url = self.save_image(image_file)
