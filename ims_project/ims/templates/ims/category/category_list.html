@@ -1,0 +1,28 @@
+{% extends 'ims/base.html' %}
+{% block title %}Category List{% endblock %}
+
+{% block content %}
+<h2>Categories</h2>
+<a href="{% url 'category_create' %}" class="btn btn-primary mb-3">Add Category</a>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.description }}</td>
+            <td>
+                <a href="{% url 'category_update' item._id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'category_delete' item._id %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

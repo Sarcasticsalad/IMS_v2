@@ -1,0 +1,22 @@
+{% extends 'ims/base.html' %}
+{% block title %}Supplier Form{% endblock %}
+
+{% block content %}
+<h2>{{ item|default:"Create" }} Supplier</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input name="name" value="{{ item.name|default:'' }}" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Contact Person</label>
+        <input name="contact_person" value="{{ item.contact_person|default:'' }}" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Phone</label>
+        <input name="phone" value="{{ item.phone|default:'' }}" class="form-control">
+    </div>
+    <button class="btn btn-success" type="submit">Save</button>
+</form>
+{% endblock %}

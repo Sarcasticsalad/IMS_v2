@@ -1,0 +1,28 @@
+{% extends "authentication/base.html" %}
+
+{% block title %}Login - IMS{% endblock %}
+
+{% block content %}
+<div class="card mx-auto" style="max-width: 400px;">
+    <div class="card-body">
+        <h4 class="card-title text-center mb-4">Login</h4>
+        
+        <!-- Login Form -->
+        <form method="POST" action="{% url 'authentication:login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
+        </form>
+
+        <!-- Register Button (redirects to OAuth) -->
+        <a class="btn btn-danger w-100" href="{% url 'social:begin' 'google-oauth2' %}">Register / Login with Google</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'ims/base.html' %}
+{% block title %}Product Form{% endblock %}
+
+{% block content %}
+<h2>{% if item %}Update{% else %}Create{% endif %} Product</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input name="name" value="{{ item.name|default:'' }}" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Price</label>
+        <input name="price" value="{{ item.price|default:'' }}" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Stock</label>
+        <input name="stock" value="{{ item.stock|default:'' }}" class="form-control" required>
+    </div>
+
+    <!-- Image input field -->
+    <div class="mb-3">
+        <label class="form-label">Image</label>
+        <input type="file" name="image" class="form-control" accept="image/*">
+    </div>
+
+    <!-- If editing an existing product, display the current image -->
+    {% if item.image_url %}
+    <div class="mb-3">
+        <label class="form-label">Current Image</label>
+        <img src="{{ item.image_url }}" alt="Product Image" style="max-width: 200px; height: auto;">
+    </div>
+    {% endif %}
+
+    <button class="btn btn-success" type="submit">Save</button>
+</form>
+{% endblock %}

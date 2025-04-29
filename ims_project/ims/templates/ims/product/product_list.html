@@ -1,0 +1,38 @@
+{% extends 'ims/base.html' %}
+{% block title %}Product List{% endblock %}
+
+{% block content %}
+<h2>Products</h2>
+<a href="{% url 'ims:model_create' model_name='product' %}" class="btn btn-primary mb-3">Add Product</a>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Image</th>  <!-- Added column for the image -->
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.stock }}</td>
+            <td>
+                {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="Product Image" style="max-width: 100px; height: auto;">
+                {% else %}
+                    No Image
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'ims:model_update' model_name='product' item_id=item.item_id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'ims:model_delete' model_name='product' item_id=item.item_id %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

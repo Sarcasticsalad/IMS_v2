@@ -1,0 +1,30 @@
+{% extends 'ims/base.html' %}
+{% block title %}Customer List{% endblock %}
+
+{% block content %}
+<h2>Customers</h2>
+<a href="{% url 'customer_create' %}" class="btn btn-primary mb-3">Add Customer</a>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.phone }}</td>
+            <td>
+                <a href="{% url 'customer_update' item._id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'customer_delete' item._id %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
