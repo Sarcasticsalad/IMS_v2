@@ -2,7 +2,7 @@
 
 #### 1) Create a virutal environment and activate it.
 ```
-1) py 3.10 -m venv .venv
+1) py -3.10 -m venv .venv
 ```
 ```
 2) # Windows:
