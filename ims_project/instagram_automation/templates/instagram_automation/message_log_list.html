@@ -1,0 +1,56 @@
+{% extends 'ims/base.html' %}
+
+{% block title %}Instagram Message Logs{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Instagram Message Logs</h2>
+
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if messages_list %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Sender ID</th>
+                    <th>Message</th>
+                    <th>Response</th>
+                    <th>Rule Applied</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in messages_list %}
+                <tr>
+                    <td>{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+                    <td>{{ log.sender_id }}</td>
+                    <td>{{ log.message_text }}</td>
+                    <td>{{ log.response_text|default:"No response" }}</td>
+                    <td>
+                        {% if log.rule_id %}
+                        <span class="badge bg-info">Rule {{ log.rule_id }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">No rule</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No message logs found yet. Messages will appear here once customers start interacting with your Instagram account.
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

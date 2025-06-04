@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'social_django',
     'authentication',
     'ims',
+    'instagram_automation',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -93,6 +96,10 @@ DATABASES = {
 # MONGO_URI is read from .env and used in ims/models.py
 MONGO_URI = config('MONGO_URI')
 
+# MongoDB settings
+MONGODB_URI = 'mongodb://localhost:27017/'
+MONGODB_NAME = 'ims_db'
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -128,7 +135,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Comment out STATICFILES_DIRS if the directory doesn't exist
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
 
 # Media files (Product images)
 MEDIA_URL = '/media/'
@@ -168,6 +180,11 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'post_login_redirect'
 LOGOUT_REDIRECT_URL = 'login'
 
-# Instagram settings (used in ims/instagram.py)
-INSTAGRAM_ACCESS_TOKEN = config('INSTAGRAM_ACCESS_TOKEN')
-# INSTAGRAM_PAGE_ID = config('INSTAGRAM_PAGE_ID')
+# Instagram settings
+INSTAGRAM_ACCESS_TOKEN = 'IGAAfP3H1l11RBZAFByVFNQRWd4T2pGYTFQWFZARZA0ZA1PURMSE84OWJWQV9NSGNTejRDampwSUEwWlZA6S0wyOEFBLURoYnlqRWVxNHM0bXlyTV9VVTF3RXVKVmZAvYjVMY0lMR3ZAJTi1kdlozVTJiazAyZAmE5ODUyVVlqZAlB4WllJZAwZDZD'
+INSTAGRAM_ACCOUNT_ID = '9804939892925316'
+INSTAGRAM_VERIFY_TOKEN = 'your_verify_token_here'  # Used for webhook verification
+
+# Crispy Forms Configuration
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

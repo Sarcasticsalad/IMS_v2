@@ -1,0 +1,75 @@
+{% extends 'ims/base.html' %}
+
+{% block title %}Auto-Response Rules{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Auto-Response Rules</h2>
+        <a href="{% url 'instagram_automation:rule_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Rule
+        </a>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if rules %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Stock Level</th>
+                    <th>Response Message</th>
+                    <th>Low Stock Threshold</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rule in rules %}
+                <tr>
+                    <td>{{ rule.product_name }}</td>
+                    <td>{{ rule.stock_level_display }}</td>
+                    <td>{{ rule.response_message }}</td>
+                    <td>{{ rule.low_stock_threshold }}</td>
+                    <td>
+                        {% if rule.is_active %}
+                        <span class="badge bg-success">Active</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{% url 'instagram_automation:rule_update' rule_id=rule.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form action="{% url 'instagram_automation:rule_delete' rule_id=rule.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this rule?')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No auto-response rules found. <a href="{% url 'instagram_automation:rule_create' %}">Create one now</a>.
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

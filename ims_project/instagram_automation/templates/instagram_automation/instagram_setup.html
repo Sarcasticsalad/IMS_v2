@@ -1,0 +1,61 @@
+{% extends 'ims/base.html' %}
+
+{% block title %}Instagram Setup{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Instagram Connection Setup</h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if connection_status %}
+                    <div class="alert {% if connection_status.success %}alert-success{% else %}alert-danger{% endif %} mb-4">
+                        {{ connection_status.message }}
+                        {% if connection_status.success %}
+                        <div class="mt-2">
+                            <strong>Connected Account:</strong> {{ connection_status.username }}
+                            {% if connection_status.profile_picture_url %}
+                            <img src="{{ connection_status.profile_picture_url }}" alt="Profile Picture" class="rounded-circle ms-2" style="width: 30px; height: 30px;">
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="access_token" class="form-label">Access Token</label>
+                            <input type="text" class="form-control" id="access_token" name="access_token" 
+                                   value="{{ credentials.access_token|default:'' }}" required>
+                            <div class="form-text">Your Instagram Graph API access token</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="instagram_account_id" class="form-label">Instagram Account ID</label>
+                            <input type="text" class="form-control" id="instagram_account_id" name="instagram_account_id" 
+                                   value="{{ credentials.instagram_account_id|default:'' }}" required>
+                            <div class="form-text">Your Instagram Business Account ID</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            {% if has_credentials %}Update{% else %}Save{% endif %} Credentials
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

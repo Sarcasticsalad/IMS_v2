@@ -1,0 +1,89 @@
+{% extends 'ims/base.html' %}
+
+{% block title %}{% if rule %}Edit{% else %}Create{% endif %} Auto-Response Rule{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">{% if rule %}Edit{% else %}Create{% endif %} Auto-Response Rule</h3>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages mb-3">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" action="{% if rule %}{% url 'instagram_automation:rule_update' rule_id=rule.id %}{% else %}{% url 'instagram_automation:rule_create' %}{% endif %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="product_id" class="form-label">Product</label>
+                            <select name="product_id" id="product_id" class="form-select" required>
+                                <option value="">Select a product</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}" {% if rule and rule.product_id == product.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ product.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="stock_level" class="form-label">Stock Level</label>
+                            <select name="stock_level" id="stock_level" class="form-select" required>
+                                {% for value, label in stock_level_choices %}
+                                <option value="{{ value }}" {% if rule and rule.stock_level == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="response_message" class="form-label">Response Message</label>
+                            <textarea name="response_message" id="response_message" class="form-control" rows="4" required>{{ rule.response_message|default:'' }}</textarea>
+                            <small class="form-text text-muted">
+                                You can use placeholders like {product_name}, {quantity}, etc. in your message.
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="low_stock_threshold" class="form-label">Low Stock Threshold</label>
+                            <input type="number" name="low_stock_threshold" id="low_stock_threshold" class="form-control" 
+                                   value="{{ rule.low_stock_threshold|default:10 }}" min="0" required>
+                            <small class="form-text text-muted">
+                                Products with stock below this number will be considered "low stock"
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" name="is_active" id="is_active" class="form-check-input" 
+                                       {% if not rule or rule.is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="is_active">Active</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'instagram_automation:rule_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {% if rule %}Update{% else %}Create{% endif %} Rule
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
