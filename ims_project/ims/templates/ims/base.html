@@ -21,22 +21,7 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'ims:model_list' model_name='supplier' %}">Suppliers</a></li>
                 
                 <!-- Instagram Automation Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="instagramDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fab fa-instagram"></i> Instagram
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'instagram_automation:setup' %}">
-                            <i class="fas fa-cog"></i> Setup
-                        </a></li>
-                        <li><a class="dropdown-item" href="{% url 'instagram_automation:rule_list' %}">
-                            <i class="fas fa-list"></i> Auto-Response Rules
-                        </a></li>
-                        <li><a class="dropdown-item" href="{% url 'instagram_automation:message_logs' %}">
-                            <i class="fas fa-history"></i> Message Logs
-                        </a></li>
-                    </ul>
-                </li>
+                
             </ul>
             
             <ul class="navbar-nav ms-auto">

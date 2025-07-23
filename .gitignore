@@ -3,3 +3,95 @@ media/
 db.sqlite3
 .venv
 ims_project/.env
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+*.mo
+*.pyo
+
+# Django media and static files
+/media
+/staticfiles
+/static/
+
+# Environment variables
+.env
+.env.*
+
+# VS Code and other IDEs
+.vscode/
+.idea/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python egg metadata
+*.egg-info/
+.eggs/
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+coverage.xml
+*.cover
+.hypothesis/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# Celery beat schedule file
+celerybeat-schedule
+
+# Docker related
+*.pid
+
+# node modules (if using npm/yarn)
+node_modules/
+
+# Database backups
+*.bak
+*.dump
+*.backup
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
