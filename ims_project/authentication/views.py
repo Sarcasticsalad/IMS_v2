@@ -1,16 +1,72 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.forms import SetPasswordForm, UserCreationForm, AuthenticationForm
 from django.urls import reverse
 from .models import UserProfile
 from social_django.models import UserSocialAuth
 from django.contrib.auth.models import User
+import logging
+
+logger = logging.getLogger(__name__)
+
+# View to handle signup
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # Creates and saves the new user to the database
+            user = form.save()
+
+            # Creates the associated UserProfile
+            UserProfile.objects.create(user=user, password_set=True)
+
+            # This logs the new user immediately after sign up
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+            logger.info(f"User {user.username} created and logged in.")
+
+            # Redirect the user to main dashboard
+            return redirect('ims:dashboard')
+        
+        else:
+            logger.error("Form is not valid.")
+            logger.error(form.errors.as_json())
+
+    else:
+        form = UserCreationForm()
+    return render(request, 'authentication/signup.html', {'form':form})    
+
 
 # View to handle user login
 def login_view(request):
+    if request.method == 'POST':
+        # Use Django's built-in AuthenticationForm
+        logger.info("Login view received a POST request.")
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            logger.info("Login form is valid.")
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            # Autheticate the user
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                logger.info(f"User '{username}' authenticated successfully.")
+                login(request, user)
+                return redirect('ims:dashboard')
+            
+            else: 
+                logger.error("Login form is not valid.")
+                logger.error(f"Form errors: {form.errors.as_json()}")
+        else:
+            logger.info("Login view received a GET request.")
+            form = AuthenticationForm()
+                
     if request.user.is_authenticated:
         return redirect(reverse('ims:dashboard'))  # Redirect to dashboard if user is logged in
+    
     return render(request, 'authentication/login.html')  # Render the login page if not authenticated
 
 # View for setting a password
