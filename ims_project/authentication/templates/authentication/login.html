@@ -22,7 +22,13 @@
         </form>
 
         <!-- Register Button (redirects to OAuth) -->
-        <a class="btn btn-danger w-100" href="{% url 'social:begin' 'google-oauth2' %}">Register / Login with Google</a>
+        <a class="btn btn-danger w-100" href="{% url 'social:begin' 'google-oauth2' %}">Register with Google</a>
+        <div class="text-center mt-3">
+            <p>
+                <a href="{% url 'authentication:signup' %}">Sign Up</a>
+            </p>
+
+        </div>
     </div>
 </div>
 {% endblock %}
