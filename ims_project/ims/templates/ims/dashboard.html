@@ -3,6 +3,29 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h2>Welcome to IMS Dashboard</h2>
-<p class="lead">Use the navigation bar to manage your inventory.</p>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-3">Welcome to IMS Dashboard</h2>
+                <p class="lead text-center text-muted">Use the navigation bar above to manage your inventory system efficiently.</p>
+                <hr>
+                <div class="d-flex justify-content-around flex-wrap mt-4">
+                    <a href="{% url 'ims:model_list' model_name='product' %}" class="btn btn-outline-primary mb-2">
+                        <i class="fas fa-box"></i> Manage Products
+                    </a>
+                    <a href="{% url 'ims:model_list' model_name='category' %}" class="btn btn-outline-secondary mb-2">
+                        <i class="fas fa-tags"></i> Manage Categories
+                    </a>
+                    <a href="{% url 'ims:model_list' model_name='customer' %}" class="btn btn-outline-success mb-2">
+                        <i class="fas fa-users"></i> View Customers
+                    </a>
+                    <a href="{% url 'ims:model_list' model_name='supplier' %}" class="btn btn-outline-warning mb-2">
+                        <i class="fas fa-truck"></i> View Suppliers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
