@@ -3,31 +3,38 @@
 {% block title %}Login - IMS{% endblock %}
 
 {% block content %}
-<div class="card mx-auto" style="max-width: 400px;">
+<div class="card mx-auto my-5 shadow-lg" style="max-width: 400px;">
     <div class="card-body">
         <h4 class="card-title text-center mb-4">Login</h4>
         
         <!-- Login Form -->
         <form method="POST" action="{% url 'authentication:login' %}">
             {% csrf_token %}
+            
+            <!-- Username Field -->
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <input type="text" class="form-control" id="username" name="username" required placeholder="Enter your username">
             </div>
+            
+            <!-- Password Field -->
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
             </div>
-            <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
         </form>
 
-        <!-- Register Button (redirects to OAuth) -->
-        <a class="btn btn-danger w-100" href="{% url 'social:begin' 'google-oauth2' %}">Register with Google</a>
-        <div class="text-center mt-3">
-            <p>
-                <a href="{% url 'authentication:signup' %}">Sign Up</a>
-            </p>
+        <!-- Google Login -->
+        <a class="btn btn-danger w-100 mb-3" href="{% url 'social:begin' 'google-oauth2' %}">
+            <i class="fab fa-google me-2"></i> Register with Google
+        </a>
 
+        <!-- Sign Up Link -->
+        <div class="text-center mt-3">
+            <p>Don't have an account? <a href="{% url 'authentication:signup' %}" class="text-decoration-none">Sign Up</a></p>
         </div>
     </div>
 </div>
