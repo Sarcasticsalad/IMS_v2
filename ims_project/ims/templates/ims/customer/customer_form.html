@@ -2,21 +2,79 @@
 {% block title %}Customer Form{% endblock %}
 
 {% block content %}
-<h2>{% if item %}Update{% else %}Create{% endif %} Customer</h2>
-<form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label class="form-label">Name</label>
-        <input name="name" value="{{ item.name|default:'' }}" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input name="email" value="{{ item.email|default:'' }}" type="email" class="form-control">
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Phone</label>
-        <input name="phone" value="{{ item.phone|default:'' }}" class="form-control">
-    </div>
-    <button class="btn btn-success" type="submit">Save</button>
-</form>
+<div class="container">
+    <h2 class="mb-4">{% if item %}Update{% else %}Create{% endif %} Customer</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ item.name|default:'' }}"
+                class="form-control"
+                placeholder="Enter full name"
+                required
+            >
+            <div class="invalid-feedback">
+                Please enter the customer's name.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ item.email|default:'' }}"
+                class="form-control"
+                placeholder="Enter email address"
+            >
+            <div class="invalid-feedback">
+                Please enter a valid email address.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value="{{ item.phone|default:'' }}"
+                class="form-control"
+                placeholder="Enter phone number"
+            >
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save me-1"></i> Save
+            </button>
+            <a href="{% url 'ims:model_list' model_name='customer' %}" class="btn btn-secondary">
+                <i class="fas fa-times me-1"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+(() => {
+    'use strict'
+    const forms = document.querySelectorAll('form')
+
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})();
+</script>
 {% endblock %}

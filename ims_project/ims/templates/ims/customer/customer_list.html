@@ -2,29 +2,49 @@
 {% block title %}Customer List{% endblock %}
 
 {% block content %}
-<h2>Customers</h2>
-<a href="{% url 'ims:model_create' model_name='customer' %}" class="btn btn-primary mb-3">Add Customer</a>
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in items %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.email }}</td>
-            <td>{{ item.phone }}</td>
-            <td>
-                <a href="{% url 'ims:model_update' model_name='customer' item_id=item.item_id %}" class="btn btn-sm btn-warning">Edit</a>
-                <a href="{% url 'ims:model_delete' model_name='customer' item_id=item.item_id %}" class="btn btn-sm btn-danger">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Customers</h2>
+    <a href="{% url 'ims:model_create' model_name='customer' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add Customer
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th style="width: 130px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if items %}
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.phone }}</td>
+                    <td>
+                        <a href="{% url 'ims:model_update' model_name='customer' item_id=item.item_id %}" 
+                           class="btn btn-sm btn-warning" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'ims:model_delete' model_name='customer' item_id=item.item_id %}" 
+                           class="btn btn-sm btn-danger" title="Delete"
+                           onclick="return confirm('Are you sure you want to delete this customer?');">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">No customers found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
