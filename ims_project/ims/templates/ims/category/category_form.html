@@ -2,17 +2,64 @@
 {% block title %}Category Form{% endblock %}
 
 {% block content %}
-<h2>{% if item %}Update{% else %}Create{% endif %} Category</h2>
-<form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label class="form-label">Name</label>
-        <input name="name" value="{{ item.name|default:'' }}" class="form-control" required>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Description</label>
-        <textarea name="description" class="form-control">{{ item.description|default:'' }}</textarea>
-    </div>
-    <button class="btn btn-success" type="submit">Save</button>
-</form>
+<div class="container">
+    <h2 class="mb-4">{% if item %}Update{% else %}Create{% endif %} Category</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ item.name|default:'' }}"
+                class="form-control"
+                placeholder="Enter category name"
+                required
+            >
+            <div class="invalid-feedback">
+                Please enter the category name.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+                id="description"
+                name="description"
+                class="form-control"
+                placeholder="Enter category description (optional)"
+                rows="4"
+            >{{ item.description|default:'' }}</textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save me-1"></i> Save
+            </button>
+            <a href="{% url 'ims:model_list' model_name='category' %}" class="btn btn-secondary">
+                <i class="fas fa-times me-1"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Optional Bootstrap custom validation JS
+(() => {
+    'use strict'
+    const forms = document.querySelectorAll('form')
+
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})();
+</script>
 {% endblock %}
