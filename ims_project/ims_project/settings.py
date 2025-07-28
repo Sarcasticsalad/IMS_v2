@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'instagram_automation',
     'crispy_forms',
     'crispy_bootstrap5',
+    "widget_tweaks",
 ]
 
 MIDDLEWARE = [
