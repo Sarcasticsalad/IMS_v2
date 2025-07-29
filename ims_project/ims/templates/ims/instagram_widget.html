@@ -1,13 +1,13 @@
 <div class="card shadow-sm border-0 mt-4">
     <div class="card-body p-4">
     <h3 class="card-title text-center mb-3">Instagram Integration</h3>
-    <p class="text-center text-muted">Connect your Instagram account to manage messages directly from the dashboard.</p>
+    <p class="text-center text-muted">Manage Instagram messages directly from the dashboard.</p>
     <hr>
     <div class="d-flex justify-content-around flex-wrap mt-4">
-    {% comment %} <a href="{% url 'instagram_automation:instagram_setup' %}" class="btn btn-outline-danger mb-2"> {% endcomment %}
-    <i class="fab fa-instagram"></i> Connect Instagram
+    {% comment %} <a href="{% url 'instagram_automation:instagram_setup' %}" class="btn btn-outline-danger mb-2">
+    <i class="fab fa-instagram"></i> Connect Instagram {% endcomment %}
     </a>
-   {% comment %} <a href="{% url 'instagram_automation:message_log_list' %}" class="btn btn-outline-info mb-2"> {% endcomment %}
+   <a href="{% url 'instagram_automation:message_logs' %}" class="btn btn-outline-info mb-2">
    <i class="fas fa-envelope"></i> View Messages
                 </a>
             </div>
