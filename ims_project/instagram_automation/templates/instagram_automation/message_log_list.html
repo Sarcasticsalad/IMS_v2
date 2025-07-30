@@ -4,96 +4,30 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="mb-4">Instagram Message Logs</h2>
-
-    <!-- Ngrok URL input and load button -->
-    <div class="mb-4">
-        <label for="ngrokInput" class="form-label">Enter current Ngrok URL (set in Meta webhook):</label>
-        <input type="text" id="ngrokInput" class="form-control" placeholder="https://your-ngrok-url.ngrok-free.app">
-        <button class="btn btn-primary mt-2" onclick="loadMessages()">Load Messages</button>
-    </div>
-
-    <!-- Message table -->
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
+    <h2>Instagram Message Logs</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Sender ID</th>
+                <th>Message Text</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if messages %}
+                {% for msg in messages %}
+                    <tr>
+                        <td>{{ msg.timestamp }}</td>
+                        <td>{{ msg.sender_id }}</td>
+                        <td>{{ msg.message_text }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
                 <tr>
-                    <th>Time</th>
-                    <th>Sender ID</th>
-                    <th>Message</th>
-                    <th>Response</th>
-                    <th>Rule Applied</th>
+                    <td colspan="3" class="text-center">No messages found.</td>
                 </tr>
-            </thead>
-            <tbody id="messagesTableBody">
-                <tr>
-                    <td colspan="5" class="text-center text-muted">No messages loaded yet.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            {% endif %}
+        </tbody>
+    </table>
 </div>
-
-<script>
-    function loadMessages() {
-        const ngrokUrl = document.getElementById('ngrokInput').value.trim();
-        const tbody = document.getElementById('messagesTableBody');
-
-        if (!ngrokUrl.startsWith('http')) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-danger text-center">
-                Please enter a valid Ngrok URL starting with http(s).
-            </td></tr>`;
-            return;
-        }
-
-        fetch(`${ngrokUrl}/get_messages`)
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                if (!Array.isArray(data) || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">
-                        No messages found.
-                    </td></tr>`;
-                    return;
-                }
-
-                // Clear the table body
-                tbody.innerHTML = "";
-
-                // Sort messages by timestamp descending if timestamp exists, otherwise as-is
-                data.sort((a,b) => {
-                    if(a.timestamp && b.timestamp) {
-                        return new Date(b.timestamp) - new Date(a.timestamp);
-                    }
-                    return 0;
-                });
-
-                data.forEach((msg, index) => {
-                    const timestamp = msg.timestamp ? new Date(msg.timestamp).toLocaleString() : '-';
-                    const sender = msg.sender_id || '-';
-                    const messageText = msg.message || '-';
-                    const responseText = msg.response_text || 'No response';
-                    const rule = msg.rule_id ? `<span class="badge bg-info">Rule ${msg.rule_id}</span>` : `<span class="badge bg-secondary">No rule</span>`;
-
-                    const row = `<tr>
-                        <td>${timestamp}</td>
-                        <td>${sender}</td>
-                        <td>${messageText}</td>
-                        <td>${responseText}</td>
-                        <td>${rule}</td>
-                    </tr>`;
-
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-            })
-            .catch(error => {
-                console.error("Failed to fetch messages:", error);
-                tbody.innerHTML = `<tr><td colspan="5" class="text-danger text-center">
-                    Failed to load messages from the provided Ngrok URL.
-                </td></tr>`;
-            });
-    }
-</script>
 {% endblock %}
