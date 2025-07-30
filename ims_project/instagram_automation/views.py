@@ -11,6 +11,8 @@ from .services.instagram_service import InstagramAutomationService
 from ims.models import Product
 import json
 import requests
+import os
+from django.utils.timezone import now
 
 class InstagramSetupView(LoginRequiredMixin, View):
     template_name = 'instagram_automation/instagram_setup.html'
@@ -203,6 +205,27 @@ class InstagramWebhookView(View):
             if mode == 'subscribe' and token == settings.INSTAGRAM_VERIFY_TOKEN:
                 return HttpResponse(challenge)
         return HttpResponse('Invalid verification token', status=403)
+    
+    def append_message_log(self, sender_id, message_text):
+        log_path = os.path.join(os.path.dirname(__file__), 'messages.json')
+        try:
+            if os.path.exists(log_path):
+                with open(log_path, 'r') as f:
+                    logs = json.load(f)
+            else:
+                logs = []
+        except json.JSONDecodeError:
+            logs = []
+
+        entry = {
+            "timestamp": now().isoformat(),
+            "sender_id": sender_id,
+            "message_text": message_text
+        }
+        logs.append(entry)
+        logs = logs[-100:]
+        with open(log_path, 'w') as f:
+            json.dump(logs, f, indent=2)
 
     def post(self, request, *args, **kwargs):
         """Handle incoming messages from Instagram"""
@@ -220,10 +243,15 @@ class InstagramWebhookView(View):
                     # Handle the message using automation service
                     service = InstagramAutomationService()
                     service.handle_incoming_message(sender_id, message_text)
+                    # Now append to log:
+                    self.append_message_log(sender_id, message_text)
 
             return JsonResponse({'status': 'ok'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+        
+
+
 
 class MessageLogListView(LoginRequiredMixin, TemplateView):
     template_name = 'instagram_automation/message_log_list.html'
@@ -231,5 +259,42 @@ class MessageLogListView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         service = InstagramAutomationService()
-        context['messages'] = service.message_log.get_recent_logs()
+        logs = service.message_log.get_recent_logs()
+
+        # If logs is a JSON string, parse it:
+        if isinstance(logs, str):
+            try:
+                logs = json.loads(logs)
+            except json.JSONDecodeError:
+                logs = []
+
+        context['messages'] = logs
         return context 
+    
+
+class FlaskMessageLogListView(LoginRequiredMixin, TemplateView):
+    template_name = 'instagram_automation/message_log_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        try:
+            response = requests.get("http://127.0.0.1:8001/get_messages")
+            response.raise_for_status()
+            messages = response.json()
+
+            for msg in messages:
+                msg['message_text'] = msg.pop('message', '')
+                timestamp = msg.get("timestamp", 0)
+                try:
+                    from datetime import datetime
+                    msg['timestamp'] = datetime.fromtimestamp(timestamp / 1000).strftime('%Y-%m-%d %H:%M:%S')
+                except:
+                    msg['timestamp'] = "Invalid"
+        except Exception as e:
+            print(f"Error fetching messages from Flask: {e}")
+            messages = []
+
+        context['messages'] = messages
+        return context
+
