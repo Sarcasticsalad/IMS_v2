@@ -1,11 +1,21 @@
 import json
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, jsonify
+import threading
 import requests
 import re
 from pymongo import MongoClient
+import time
+import uuid
+from flask_cors import CORS
+import os
 
+temporary_messages_lock = threading.Lock()
 
-app = Flask(__name__)
+# app = Flask(__name__)
+TEMPLATE_DIR = os.path.abspath("../ims_project/instagram_automation/templates/instagram_automation/")
+app = Flask(__name__, template_folder=TEMPLATE_DIR)
+
+CORS(app)
 
 app_id = "722208127015775"
 app_secret = "8a9b4db86d3178a591300d918f729a12"
@@ -55,14 +65,22 @@ def webhook():
                         message_text = event["message"].get("text", "")
                         print(f"Message from {sender_id}: {message_text}")
 
+                        # Generate a unique conversation ID for this user message + bot reply pair
+                        conversation_id = str(uuid.uuid4())
+
                         # Append message to temporary memory
-                        temporary_messages.append({
-                            "sender_id": sender_id,
-                            "message": message_text
-                        })
+                        with temporary_messages_lock:
+                            # Save user message
+                            temporary_messages.append({
+                                "id": conversation_id,
+                                "type": "user",
+                                "timestamp": int(time.time()* 1000),
+                                "sender_id": sender_id,
+                                "message": message_text,
+                                
+                            })
 
                         product_name = extract_product_name(message_text)
-
 
                         if product_name:
                             reply = get_product_stock(product_name)
@@ -72,6 +90,16 @@ def webhook():
 
                         send_reply(sender_id, reply)
 
+                        with temporary_messages_lock:
+                            # Save bot reply linked to the same conversation ID
+                            temporary_messages.append({
+                                "id": conversation_id,
+                                "type": "bot",
+                                "timestamp": int(time.time() * 1000),
+                                "sender_id": "bot",
+                                "message": reply,
+                            })
+
         except Exception as e:
             print("Error:", e)
 
@@ -79,8 +107,10 @@ def webhook():
 
 @app.route("/get_messages", methods=["GET"])
 def get_messages():
+    with temporary_messages_lock:
+        last_20 = sorted(temporary_messages, key=lambda x: x.get("timestamp", 0), reverse=True)[:20]
     # Return last 20 messages as JSON
-    return json.dumps(temporary_messages[-20:])
+    return jsonify(last_20)
 
 def extract_product_name(message):
     """
