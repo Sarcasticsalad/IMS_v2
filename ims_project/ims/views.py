@@ -84,13 +84,16 @@ def model_update(request, model_name, item_id):
 
             image_file = request.FILES.get('image')
 
-            if model_name == 'product' and image_file:
-                if 'image_url' in item:
-                    model_instance.delete_image(item['image_url'])
-                model_instance.update(item_id, data)  
+            if model_name == 'product':
+                if image_file:
+                    if 'image_url' in item:
+                        model_instance.delete_image(item['image_url'])
+                    model_instance.update(item_id, data, image_file=image_file)  
+                else:
+                    model_instance.update(item_id, data)
 
             else:
-                model_instance.update(item_id, data)
+                model_instance.update(item_id, data)        
 
             return redirect(reverse('ims:model_list', args=[model_name]))
         
