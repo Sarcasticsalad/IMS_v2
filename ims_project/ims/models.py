@@ -99,6 +99,19 @@ class Product(MongoBase):
         file_path = default_storage.save(file_name, ContentFile(image_file.read()))
         file_url = default_storage.url(file_path)
         return file_url
+    
+    def update(self, item_id, data, image_file=None):
+        try:
+            # If a new image was uploaded, save and update image_url
+            if image_file:
+                image_url = self.save_image(image_file)
+                data['image_url'] = image_url
+
+            return super().update(item_id, data)
+        except Exception as e:
+            print(f"Error updating product: {e}")
+            return None
+
 
     def delete_image(self, image_url):
         try:
