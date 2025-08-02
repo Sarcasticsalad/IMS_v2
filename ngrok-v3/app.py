@@ -8,6 +8,7 @@ import time
 import uuid
 from flask_cors import CORS
 import os
+from datetime import datetime
 
 temporary_messages_lock = threading.Lock()
 
@@ -30,7 +31,6 @@ db = client['ims_db']
 product_collection = db['products']
 # Temporary in-memory message list
 temporary_messages = []
-
 
 
 @app.route("/")
@@ -61,9 +61,12 @@ def webhook():
                 for event in entry.get("messaging", []):
                     sender_id = event["sender"]["id"]
 
-                    if "message" in event:
+                    if "message" in event and not event["message"].get("is_echo", False):
                         message_text = event["message"].get("text", "")
                         print(f"Message from {sender_id}: {message_text}")
+
+                        if message_text.startswith("Hello Thankyou for Inquiring"):
+                            continue 
 
                         # Generate a unique conversation ID for this user message + bot reply pair
                         conversation_id = str(uuid.uuid4())
@@ -127,19 +130,20 @@ def extract_product_name(message):
 def get_product_stock(product_name):
     product = product_collection.find_one({'name': {'$regex': product_name, '$options': 'i'}})
     if not product:
-        return f"❌ Sorry, the product '{product_name}' is not available in our inventory."
+        return f"Sorry, the product '{product_name}' is not available in our inventory."
 
     try:
         stock = int(product.get("stock", 0))
+        price = int(product.get("price", 0))
     except (ValueError, TypeError):
         return f" '{product_name}' found, but stock value is invalid."
     if stock == 0:
         return f" '{product_name}' is currently out of stock."
     elif stock < 10:
-        return f" '{product_name}' is in stock but running low: only {stock} units left."
+        return f" '{product_name}' is in stock but running low: only {stock} units left. Price: NRP {price}"
     else:
-        return f" '{product_name}' is available. Stock: {stock} units."
-
+        return f" '{product_name}' is available. Stock: {stock} units, Price NRP {price}."
+    
 
 
 def send_reply(recipient_id, message_text):
