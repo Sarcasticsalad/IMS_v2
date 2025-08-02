@@ -2,8 +2,13 @@ import requests
 from django.conf import settings
 from ..models import InstagramCredentials, AutoResponseRule, MessageLog
 from ims.models import Product
+import hashlib
+import time
+import logging
 
 class InstagramAutomationService:
+    recent_messages = {}
+
     def __init__(self):
         self.credentials = InstagramCredentials.objects.first()
         self.rule_model = AutoResponseRule()
@@ -42,6 +47,9 @@ class InstagramAutomationService:
 
     def handle_incoming_message(self, sender_id, message_text):
         """Handle an incoming message and generate an automated response"""
+        if self._is_duplicate_message(sender_id, message_text):
+            return
+
         # Check if message contains product inquiry
         product_model = Product()
         products = product_model.all()
@@ -100,3 +108,28 @@ class InstagramAutomationService:
         elif quantity <= product.get('low_stock_threshold', 10):
             return 'low_stock'
         return 'in_stock' 
+    
+    def _is_duplicate_message(self, sender_id, message_text, ttl_seconds=120):
+        """Check whether the message was already handled recently"""
+        try:
+            message_key = f"{sender_id}:{message_text}"
+            message_hash = hashlib.sha256(message_key.encode()).hexdigest()
+            now = time.time()
+
+            # Remove old entries
+            InstagramAutomationService.recent_messages = {
+                k: v for k, v in InstagramAutomationService.recent_messages.items()
+                if now - v < ttl_seconds
+            }
+
+            if message_hash in InstagramAutomationService.recent_messages:
+                logging.info(f"[Duplicate Ignored] sender={sender_id}, message='{message_text}'")
+                return True
+
+            # Mark as seen
+            InstagramAutomationService.recent_messages[message_hash] = now
+            return False
+
+        except Exception as e:
+            logging.warning(f"Deduplication check failed: {e}")
+            return False  # Allow processing if there's an error
